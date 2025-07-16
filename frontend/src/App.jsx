@@ -14,6 +14,9 @@ import AllUsers from './pages/admin/AllUsers'
 import api from './api/api'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import Favorites from './pages/user/Favorites'
+import Playlists from './pages/user/Playlists'
+import PlaylistDetail from './pages/user/PlaylistDetail'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -69,7 +72,9 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
-              
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/playlists" element={<Playlists />} />
+              <Route path="/playlists/:id" element={<PlaylistDetail />} />    
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/upload" element={<UploadSong />} />
