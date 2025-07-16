@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import AuthContext from './context/AuthContext'
 import { useState, useEffect } from 'react'
 import ProtectedRoute from './utils/ProtectedRoute'
@@ -17,10 +17,14 @@ import Footer from './components/Footer'
 import Favorites from './pages/user/Favorites'
 import Playlists from './pages/user/Playlists'
 import PlaylistDetail from './pages/user/PlaylistDetail'
+import { AudioProvider } from './context/AudioContext'
+import NowPlayingBar from './components/NowPlayingBar'
 
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const location = useLocation()
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -62,30 +66,33 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/playlists" element={<Playlists />} />
-              <Route path="/playlists/:id" element={<PlaylistDetail />} />    
-              <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/upload" element={<UploadSong />} />
-                <Route path="/admin/songs" element={<AllSongs />} />
-                <Route path="/admin/users" element={<AllUsers />} />
+      <AudioProvider>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow pb-16">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/playlists" element={<Playlists />} />
+                <Route path="/playlists/:id" element={<PlaylistDetail />} />    
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/upload" element={<UploadSong />} />
+                  <Route path="/admin/songs" element={<AllSongs />} />
+                  <Route path="/admin/users" element={<AllUsers />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+            </Routes>
+          </main>
+          {!isAuthPage && <NowPlayingBar />}
+          <Footer />
+        </div>
+      </AudioProvider>
     </AuthContext.Provider>
   )
 }

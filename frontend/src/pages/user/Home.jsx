@@ -2,17 +2,20 @@ import { useState, useEffect, useContext } from 'react'
 import SongCard from '../../components/SongCard'
 import api from '../../api/api'
 import AuthContext from '../../context/AuthContext'
+import { useAudio } from '../../context/AudioContext'
 
 const Home = () => {
   const [songs, setSongs] = useState([])
   const [loading, setLoading] = useState(true)
   const { user } = useContext(AuthContext)
+  const { updateSongList } = useAudio()
 
   useEffect(() => {
     const fetchSongs = async () => {
       try {
         const { data } = await api.get('/songs')
         setSongs(data)
+        updateSongList(data)
       } catch (err) {
         console.error('Failed to fetch songs', err)
       } finally {
@@ -20,7 +23,7 @@ const Home = () => {
       }
     }
     fetchSongs()
-  }, [])
+  }, [updateSongList])
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen">
